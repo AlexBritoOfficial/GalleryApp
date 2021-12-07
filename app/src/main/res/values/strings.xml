@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DraperLabsFinal</string>
+    <string name="photos_tab">Photos</string>
+    <string name="videos_tab">Videos</string>
+    <string name="albums_tab">Album</string>
+    <string name="open_drawer">Open Navigation Menu</string>
+</resources>
