@@ -19,12 +19,17 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.draperlabssecond.R;
 import com.example.draperlabssecond.databinding.ImageGalleryFragmentBinding;
+import com.example.draperlabssecond.databinding.ImageGalleryParentLayoutBinding;
 import com.example.draperlabssecond.model.Image;
 import com.example.draperlabssecond.utils.ImageClickListener;
 import com.example.draperlabssecond.viewmodel.ImageGalleryViewModel;
 import com.example.draperlabssecond.views.adapter.ImageGalleryAdapter;
+import com.example.draperlabssecond.views.adapter.ImageGalleryChildViewHolder;
+import com.example.draperlabssecond.views.adapter.ImageGalleryParentAdapter;
 import com.example.draperlabssecond.views.adapter.ImageGalleryViewHolder;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
@@ -34,9 +39,11 @@ public class ImageGalleryFragment extends Fragment implements ImageClickListener
     /** CLASS MEMBERS **/
     private static final int READ_STORAGE_PERMISSION_REQUEST_CODE = 0;
     private NavController navController;
-    private ImageGalleryFragmentBinding imageGalleryFragmentBinding;
+   // private ImageGalleryFragmentBinding imageGalleryFragmentBinding;
+    private ImageGalleryParentLayoutBinding imageGalleryParentLayoutBinding;
     private ImageGalleryViewModel imageGalleryViewModel;
     private ImageGalleryAdapter imageGalleryAdapter;
+    private ImageGalleryParentAdapter imageGalleryParentAdapter;
     private Uri collection;
 
     /** Empty Constructor **/
@@ -64,25 +71,25 @@ public class ImageGalleryFragment extends Fragment implements ImageClickListener
         }
 
         /** Set FragmentImageGalleryBinding **/
-        imageGalleryFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.image_gallery_fragment, container, false);
-
+        //imageGalleryFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.image_gallery_fragment, container, false);
+        imageGalleryParentLayoutBinding = DataBindingUtil.inflate(inflater, R.layout.image_gallery_parent_layout, container, false);
 
         /** Set RecyclerView to have GridLayoutManager **/
-        imageGalleryFragmentBinding.recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        imageGalleryParentLayoutBinding.parentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         imageGalleryViewModel = new ImageGalleryViewModel(getContext(), collection);
-        imageGalleryAdapter = new ImageGalleryAdapter(getContext(), imageGalleryViewModel.getData(),this);
+        imageGalleryParentAdapter = new ImageGalleryParentAdapter(getContext(), imageGalleryViewModel.getData(), this);
 
         /** Populate RecyclerView with Data **/
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 synchronized (this){
-                    imageGalleryFragmentBinding.recyclerView.setAdapter(imageGalleryAdapter);
+                    imageGalleryParentLayoutBinding.parentRecyclerView.setAdapter(imageGalleryParentAdapter);
                 }
             }
         });
 
-        return imageGalleryFragmentBinding.getRoot();
+        return imageGalleryParentLayoutBinding.getRoot();
     }
 
     @Override
@@ -112,8 +119,7 @@ public class ImageGalleryFragment extends Fragment implements ImageClickListener
     }
 
     @Override
-    public void onImageClicked(Context context, ImageGalleryViewHolder imageGalleryViewHolder, int position, List<Image> data) {
-        FullPictureFragment fullPictureFragment = new FullPictureFragment(getContext(),imageGalleryViewHolder, position, data);
+    public void onImageClicked(Context context, ImageGalleryChildViewHolder imageGalleryChildViewHolder, int position, List<Image> data) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("FullImageParcelable", data.get(position));
 

@@ -3,19 +3,35 @@ package com.example.draperlabssecond.model;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 // DAY ENUM ////////////
 enum Day {
-    MONDAY,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY
+    MONDAY("Monday"),
+    TUESDAY("Tuesday"),
+    WEDNESDAY("Wednesday"),
+    THURSDAY("Thursday"),
+    FRIDAY("Friday"),
+    SATURDAY("Saturday"),
+    SUNDAY("Sunday");
+
+    Day(String string) {
+    }
+}
+
+enum Month {
+    JANUARY("January"),
+    FEBRUARY("February"),
+    MARCH("March");
+
+    Month(String string) {
+    }
 }
 
 public class Image implements Parcelable {
@@ -36,11 +52,33 @@ public class Image implements Parcelable {
     /*** IMAGE UNIFORM RESOURCE ID ***/
     private Uri uriResourceId;
 
-    /** IMAGE UNIFORM RESOURCE ID String**/
+    /**
+     * IMAGE UNIFORM RESOURCE ID String
+     **/
     private String uriResourceIdString;
+
+    /**
+     * IMAGE EPOCH DATE FORMATTED String
+     **/
+    public String getDateStringFromEpoch() {
+        return dateStringFromEpoch;
+    }
+
+    public void setDateStringFromEpoch(String dateStringFromEpoch) {
+        this.dateStringFromEpoch = dateStringFromEpoch;
+    }
+
+    /*** String Date from Epoch ***/
+    private String dateStringFromEpoch;
+
+    /*** Date from Epoch List ***/
+    List<String> dateStringFromEpochList;
 
     /*** CALENDAR ***/
     Calendar calendar;
+
+    /*** DATE ***/
+    Date date;
 
     /*** DAY ***/
     Day day;
@@ -52,10 +90,13 @@ public class Image implements Parcelable {
         this.imageTitle = imageTitle;
         this.epoch = epoch;
         this.uriResourceIdString = uriResourceIdString;
+        convertEpochToDateString();
     }
 
-    /** Parcelable Constructor **/
-    protected Image (Parcel in){
+    /**
+     * Parcelable Constructor
+     **/
+    protected Image(Parcel in) {
         this.imageId = in.readInt();
         this.path = in.readString();
         this.imageTitle = in.readString();
@@ -100,6 +141,23 @@ public class Image implements Parcelable {
         this.epoch = epoch;
     }
 
+    /**
+     * 	String date = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (epoch*1000));
+     * **/
+
+    /*** Convert EPOCH to String Date ***/
+    private void convertEpochToDateString() {
+        setDateStringFromEpoch(new java.text.SimpleDateFormat("E MM/dd/yyyy").format(new java.util.Date(getEpoch() * 1000)));
+        parseEpochToDateString();
+    }
+
+    private void parseEpochToDateString(){
+        String[] parsedString = getDateStringFromEpoch().split("\\s+|/");
+        dateStringFromEpochList = Arrays.asList(parsedString);
+        setDay();
+    }
+
+
     /*** GETTER & SETTER URI ***/
     public Uri getUriResourceId() {
         return Uri.parse(getUriResourceIdString());
@@ -132,43 +190,36 @@ public class Image implements Parcelable {
         return day;
     }
 
-    public void setDay(Day day) {
-
-        Calendar c = Calendar.getInstance();
-
-        Date date = new Date(this.epoch);
-
-        c.setTime(date);
-
-        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+    public void setDay() {
+        String dayOfWeek = dateStringFromEpochList.get(0);
 
         switch (dayOfWeek) {
-            case 1:
+            case "Sun":
+                day = Day.SUNDAY;
+                break;
+
+            case "Mon":
                 this.day = Day.MONDAY;
                 break;
 
-            case 2:
+            case "Tues":
                 this.day = Day.TUESDAY;
                 break;
 
-            case 3:
+            case "Wed":
                 this.day = Day.WEDNESDAY;
                 break;
 
-            case 4:
+            case "Thu":
                 this.day = Day.THURSDAY;
                 break;
 
-            case 5:
+            case "Fri":
                 this.day = Day.FRIDAY;
                 break;
 
-            case 6:
+            case "Sat":
                 this.day = Day.SATURDAY;
-                break;
-
-            case 7:
-                this.day = Day.SUNDAY;
                 break;
         }
     }

@@ -62,9 +62,6 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryViewHo
                 .apply(new RequestOptions().centerCrop())
                 .into(holder.imageView);
 
-        holder.getImageView().setOnClickListener(e -> {
-            imageClickListener.onImageClicked(context, holder, position, data);
-        });
     }
 
     @Override

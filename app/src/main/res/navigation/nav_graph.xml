@@ -22,7 +22,7 @@
     <fragment
         android:id="@+id/fullPictureFragment"
         android:name="com.example.draperlabssecond.views.fragment.FullPictureFragment"
-        android:label="FullPictureFragment" >
+        android:label="Download" >
         <action
             android:id="@+id/action_fullPictureFragment_to_imageGalleryFragment"
             app:destination="@id/imageGalleryFragment" />
